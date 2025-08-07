@@ -1,0 +1,26 @@
+.input-container input:focus + label,
+.input-container input:valid + label{
+    transform: translate(5px, -13px) scale(0.78);
+    background-color: white;
+    transition: all 0.5s ease-out;
+    color: rgb(0, 29, 247);
+}
+
+.input-container label {
+  transform: translate(5px, 10px); /* posición inicial */
+  background-color: transparent;
+  transition: all 0.5s ease-out;
+  left: 5px;
+  color:#969696;
+
+}
+
+.input-container input{
+    border-width: 1px;
+
+}
+.input-container input:focus,
+.input-container input:valid{
+    border-color: rgb(0, 29, 247);
+    outline: none;
+}
