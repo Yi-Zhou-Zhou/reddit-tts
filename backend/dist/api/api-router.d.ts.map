@@ -1,1 +1,1 @@
-{"version":3,"file":"api-router.d.ts","sourceRoot":"","sources":["../../api/api-router.ts"],"names":[],"mappings":"AAAA,OAAU,EAAC,MAAM,EAAC,MAAM,SAAS,CAAC;AAElC,eAAO,MAAM,MAAM,EAAG,MAAmB,CAAA"}
+{"version":3,"file":"api-router.d.ts","sourceRoot":"","sources":["../../api/api-router.ts"],"names":[],"mappings":"AAAA,OAAU,EAAC,MAAM,EAAC,MAAM,SAAS,CAAC;AAIlC,eAAO,MAAM,MAAM,EAAG,MAAmB,CAAA"}

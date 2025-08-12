@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 export const router = e();
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
     const { email, password, confirm_password } = req.body;
     if (!email || !password) {
         return res.status(400).json({ error: "Incomplete credentials" });
@@ -12,7 +12,9 @@ router.post('/register', async (req, res) => {
     try {
         const [rows] = await connection.execute("SELECT 1 FROM user WHERE email = ? LIMIT 1", [email]);
         if (rows.length > 0) {
-            return res.status(409).json({ error: "The email is already being used" });
+            return res
+                .status(409)
+                .json({ error: "The email is already being used" });
         }
         const hashed_password = await bcrypt.hash(password, 10);
         const id = uuidv4();
@@ -20,21 +22,21 @@ router.post('/register', async (req, res) => {
         if (!process.env.SECRET_KEY) {
             throw new Error("Error while creating token");
         }
-        const token = jwt.sign({ id: id, email: email, }, process.env.SECRET_KEY);
-        res.cookie('token', token, {
+        const token = jwt.sign({ id: id, email: email }, process.env.SECRET_KEY);
+        res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.ENVIRONMENT === 'production',
-            sameSite: 'strict',
-            maxAge: 3600000
+            secure: process.env.ENVIRONMENT === "production",
+            sameSite: "strict",
+            maxAge: 3600000,
         });
-        return res.status(201).json({ msg: 'User created' });
+        return res.status(201).json({ msg: "User created" });
     }
     catch (error) {
         return res.status(500).json({ error });
     }
     // Checkear que el email no este dentro de la bbdd
 });
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(400).json({ error: "Incomplete credentials" });
@@ -51,14 +53,21 @@ router.post('/login', async (req, res) => {
             if (!process.env.SECRET_KEY) {
                 throw new Error("Error while creating token");
             }
-            const token = jwt.sign({ id: user?.id, email: user?.email }, process.env.SECRET_KEY);
-            res.cookie('token', token, {
+            const access_token = jwt.sign({ id: user?.id, email: user?.email }, process.env.SECRET_KEY);
+            const refresh_token = jwt.sign({ id: user?.id }, process.env.SECRET_KEY);
+            res.cookie("access_token", access_token, {
                 httpOnly: true,
-                secure: process.env.ENVIRONMENT === 'production',
-                sameSite: 'strict',
-                maxAge: 3600000
+                secure: process.env.ENVIRONMENT === "production",
+                sameSite: "strict",
+                maxAge: 15 * 60 * 1000,
             });
-            return res.status(200).json({ msg: 'Login succesful' });
+            res.cookie("refresh_token", refresh_token, {
+                httpOnly: true,
+                secure: process.env.ENVIRONMENT === "production",
+                sameSite: "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            });
+            return res.status(200).json({ data: { email, access_token } });
         }
         else {
             throw new Error("Invalid credentials");

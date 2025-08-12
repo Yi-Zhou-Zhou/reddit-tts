@@ -2,12 +2,13 @@ import type { NextFunction, Request, Response } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken"
 
 interface customJWTPayload extends JwtPayload {
-  id: string
+  id: string,
+  email?: string,
 }
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction){
-  const token = req.cookies.token;
-  console.log(token)
+  const token = req.cookies.access_token;
+  console.log('Token is: ', token)
   if (!token) return res.status(401).json({msg: 'Cookie not found'})
 
   try {

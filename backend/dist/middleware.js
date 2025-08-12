@@ -1,7 +1,7 @@
 import jwt, {} from "jsonwebtoken";
 export function authMiddleware(req, res, next) {
-    const token = req.cookies.token;
-    console.log(token);
+    const token = req.cookies.access_token;
+    console.log('Token is: ', token);
     if (!token)
         return res.status(401).json({ msg: 'Cookie not found' });
     try {

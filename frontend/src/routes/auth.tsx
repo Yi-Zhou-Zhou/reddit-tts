@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute} from "@tanstack/react-router";
 import { useState } from "react";
 import Input from "../components/Input/Input";
 import Button from "../components/Button/Button";
-import axios from "axios";
+import { useAuth } from "../auth";
 
 export const Route = createFileRoute("/auth")({
   component: RouteComponent,
@@ -21,6 +21,7 @@ function RouteComponent() {
   const [type, setType] = useState("login");
   const [data, setData] = useState<UserData>({});
   const [errors, setErrors] = useState(ERROR_INITIAL_STATE);
+  const {login, register} = useAuth()
   function handleChangeType() {
     setErrors(ERROR_INITIAL_STATE);
     setType(type === "login" ? "register" : "login");
@@ -99,7 +100,6 @@ function RouteComponent() {
     });
     return true;
   }
-  console.log("localhost:8000/auth/" + type)
   function validateConfirmPassword() {
     if (!data["confirm_password"]) {
       setErrors((prev) => {
@@ -123,20 +123,11 @@ function RouteComponent() {
   }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_HOST}` + "auth/" + type,
-        data,
-      );
-      if (response.status >= 200 && response.status < 300) {
-        console.log("Datos recibidos:", response.data);
-      } else {
-        console.log("Error: status", response.status);
-      }
-    } catch (err) {
-      console.log("err: ", err);
+    if (type === 'login'){
+      login(data.email, data.password)
+    }
+    else{
+      register(data.email, data.password, data.confirm_password)
     }
   };
   let formBody;
