@@ -1,36 +1,26 @@
-    import { create } from "zustand";
+import { create } from "zustand";
 import axios from "axios";
-interface Post {
-  subreddit: string;
-  title: string;
-  selfText: string;
-  thumbnail?: string;
-  url: string;
-  upvotes: number;
-}
+import type { Post} from "../types/post";
 interface usePost {
   beforeId: string | null;
   afterId: string | null;
-  savedPosts: Array<object>;
-  currentPosts: Array<object>;
+  savedPosts: Post[];
+  currentPosts: Post[];
   savePost: (post: Post) => void;
   addPost: (post: Post) => void;
-  fetchPosts: () => void;
-  setBeforeId: (id:string) => void,
-  setAfterId: (id: string) => void
+  fetchPosts: () => Promise<void>;
+  setBeforeId: (id: string) => void;
+  setAfterId: (id: string) => void;
 }
 
-interface fetchResponse{
+interface fetchResponse {
     data: {
-        data: {
-            before: string | null,
-            after: string | null,
-            children: Array<{data: Post, kind: string}>
-        }
-    }
+      before: string | null;
+      after: string | null;
+      children: Array<{ data: Post ; kind: string }>;
+    };
+  };
 
-    
-}
 
 export const usePosts = create<usePost>()((set) => ({
   beforeId: null,
@@ -45,26 +35,29 @@ export const usePosts = create<usePost>()((set) => ({
     const response = await axios.get<fetchResponse>(
       `https://www.reddit.com/search.json?q=${KEYWORDS}&restrict_sr=false&sort=${SORT_TYPE}&t=${TIME_TYPE}`
     );
-    const {after, before, children} = response.data.data.data;
+    console.log(response.data.data)
+    const { after, before, children } = response.data.data;
     set(() => ({
-        beforeId: before? before : null,
-        afterId: after? after : null ,
-        currentPosts: children.map(post => ({
-            subreddit: post.data.subreddit,
-            title: post.data.title,
-            description: post.data.selfText,
-            thumbnail: post.data.thumbnail,
-            url: post.data.url,
-            upvotes: post.data.upvotes,
-        }))
-        
-    }))
+      beforeId: before ? before : null,
+      afterId: after ? after : null,
+      currentPosts: children.map((post) => ({
+        subreddit: post.data.subreddit,
+        subreddit_id: post.data.subreddit_id,
+        subreddit_name_prefixed: post.data.subreddit_name_prefixed,
+        subscribers: post.data.subscribers,
+        title: post.data.title,
+        selftext: post.data.selftext,
+        thumbnail: post.data.thumbnail ? post.data.thumbnail : null,
+        url: post.data.url,
+        score: post.data.score? post.data.score : null,
+        id: post.data.id
+      })),
+    }));
   },
   savePost: (post) =>
     set((state) => ({ savedPosts: [...state.savedPosts, post] })),
   addPost: (post) =>
     set((state) => ({ currentPosts: [...state.currentPosts, post] })),
-  setBeforeId: (id) => set(() => ({beforeId: id})),
-  setAfterId: (id) => set(() => ({afterId: id}))
-
+  setBeforeId: (id) => set(() => ({ beforeId: id })),
+  setAfterId: (id) => set(() => ({ afterId: id })),
 }));
