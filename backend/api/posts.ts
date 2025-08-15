@@ -7,3 +7,9 @@ router.get('/', authMiddleware, (req, res) => {
     console.log("test")
     res.send("posts endpoint")
 })
+
+
+
+
+
+

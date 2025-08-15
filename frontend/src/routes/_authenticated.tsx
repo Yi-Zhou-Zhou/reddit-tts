@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import Navbar from '../components/Navbar/Navbar'
-
+import Sidebar from '../components/Sidebar/Sidebar'
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async ({context, location}) => {
     if(!context.auth.isAuthenticated){
@@ -20,7 +20,12 @@ function ProtectedRoute(){
   return (
     <>
       <Navbar/>
-      <Outlet/>
+      <div className='flex '>
+        <Sidebar/>
+        <div className='px-[48px] py-[24px] flex justify-center w-full'>
+          <Outlet/>
+        </div>
+      </div>
     </>
 
   )

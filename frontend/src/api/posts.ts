@@ -1,8 +1,9 @@
-import { api } from "../axiosConfig";
-
+import axios from "axios";
 
 export async function fetchPosts() {
-    console.log("fETCHING POSTS...")
-    const files = await api.get('posts')
-    return files
+    const KEYWORDS = 'chile'
+    const SORT_TYPE= 'recent'
+    const TIME_TYPE= 'all'
+    const posts = await axios.get(`https://www.reddit.com/search.json?q=${KEYWORDS}&restrict_sr=false&sort=${SORT_TYPE}&t=${TIME_TYPE}`)
+    return posts.data.data
 }

@@ -2,15 +2,21 @@ import { Link } from '@tanstack/react-router'
 const Navbar = () => {
   return (
     <nav>
-      <div className="p-2 flex gap-2">
-        <Link to="/" className="[&.active]:font-bold">
-          Home
+      <div className="py-2 px-4 flex gap-2 items-center justify-between border-b border-light-gray-100">
+        <Link to="/" className="[&.active]:font-bold font-fascinate">
+          Reddit-tts
         </Link>{' '}
-        <Link to="/profile" className="[&.active]:font-bold">
-          Profile
+        <div>
+          {/* <Link to="/favorites" className="[&.active]:font-bold">
+            Favorites
+          </Link> */}
+        </div>
+        <Link to="/profile" className="[&.active]:font-bold w-[40px] h-[40px] bg-black rounded-3xl">
+        {/* Temporal user logo */}
+
         </Link>
+     
       </div>
-      <hr />
     </nav>
   )
 }
