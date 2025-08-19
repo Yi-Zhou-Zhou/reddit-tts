@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
-import type { Post} from "../types/post";
+import type { RedditPostData, Post} from "../types/post";
 interface usePost {
   beforeId: string | null;
   afterId: string | null;
@@ -17,7 +17,7 @@ interface fetchResponse {
     data: {
       before: string | null;
       after: string | null;
-      children: Array<{ data: Post ; kind: string }>;
+      children: Array<{ data: RedditPostData; kind: string }>;
     };
   };
 
@@ -35,7 +35,6 @@ export const usePosts = create<usePost>()((set) => ({
     const response = await axios.get<fetchResponse>(
       `https://www.reddit.com/search.json?q=${KEYWORDS}&restrict_sr=false&sort=${SORT_TYPE}&t=${TIME_TYPE}`
     );
-    console.log(response.data.data)
     const { after, before, children } = response.data.data;
     set(() => ({
       beforeId: before ? before : null,
@@ -49,9 +48,15 @@ export const usePosts = create<usePost>()((set) => ({
         selftext: post.data.selftext,
         thumbnail: post.data.thumbnail ? post.data.thumbnail : null,
         url: post.data.url,
-        score: post.data.score? post.data.score : null,
-        id: post.data.id
-      })),
+        score: post.data.score,
+        id: post.data.id,
+        num_comments: post.data.num_comments,
+        baseImg: post.data.preview ? {
+          url: post.data.preview ?  post.data.preview.images[0].source.url.replace(/&amp;/g, "&") : '',
+          width: post.data.preview.images[0].source.width,
+          height: post.data.preview.images[0].source.height
+        } : null
+    })),
     }));
   },
   savePost: (post) =>

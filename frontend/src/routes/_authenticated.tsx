@@ -21,8 +21,8 @@ function ProtectedRoute(){
     <>
       <Navbar/>
       <div className='flex '>
-        <Sidebar/>
-        <div className='px-[48px] py-[24px] flex justify-center w-full'>
+        <Sidebar/>  
+        <div className='px-[48px] py-[24px] flex justify-center w-full h-[calc(100vh-57px)] overflow-scroll'>
           <Outlet/>
         </div>
       </div>

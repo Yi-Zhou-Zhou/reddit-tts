@@ -11,6 +11,7 @@ const Navbar = () => {
             Favorites
           </Link> */}
         </div>
+
         <Link to="/profile" className="[&.active]:font-bold w-[40px] h-[40px] bg-black rounded-3xl">
         {/* Temporal user logo */}
 
