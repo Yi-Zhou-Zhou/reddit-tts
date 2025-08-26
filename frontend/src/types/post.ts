@@ -33,4 +33,17 @@ export interface Post extends PostBase{
  } | null, 
 }
   
+export interface RedditResponse {
+  data: {
+    after: string | null,
+    before: string | null,
+    children: RedditResponseChildren[]
+  }
+}
+
+export interface RedditResponseChildren {
+  data: RedditPostData,
+  kind: string
+}
+
 

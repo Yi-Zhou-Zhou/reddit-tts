@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
-import type { RedditPostData, Post} from "../types/post";
+import type { RedditPostData, Post, RedditResponse} from "../types/post";
+import { mapRedditChildToPost } from "../utils";
 interface usePost {
   beforeId: string | null;
   afterId: string | null;
@@ -8,7 +9,7 @@ interface usePost {
   currentPosts: Post[];
   savePost: (post: Post) => void;
   addPost: (post: Post) => void;
-  fetchPosts: () => Promise<void>;
+  fetchPosts: (keywords: string, pageParam?: string|null) => Promise<RedditResponse>;
   setBeforeId: (id: string) => void;
   setAfterId: (id: string) => void;
 }
@@ -27,37 +28,23 @@ export const usePosts = create<usePost>()((set) => ({
   afterId: null,
   savedPosts: [],
   currentPosts: [],
-  fetchPosts: async () => {
+  fetchPosts: async (keywords = "", pageParam = null) => {
     // MUST CHANGE TO USER INPUT VALUES
-    const KEYWORDS = "chile";
     const SORT_TYPE = "recent";
     const TIME_TYPE = "all";
     const response = await axios.get<fetchResponse>(
-      `https://www.reddit.com/search.json?q=${KEYWORDS}&restrict_sr=false&sort=${SORT_TYPE}&t=${TIME_TYPE}`
+      `https://www.reddit.com/search.json?q=${keywords}&restrict_sr=false&sort=${SORT_TYPE}&t=${TIME_TYPE}${pageParam ? `&after=${pageParam}` : ''}`
     );
     const { after, before, children } = response.data.data;
     set(() => ({
       beforeId: before ? before : null,
       afterId: after ? after : null,
-      currentPosts: children.map((post) => ({
-        subreddit: post.data.subreddit,
-        subreddit_id: post.data.subreddit_id,
-        subreddit_name_prefixed: post.data.subreddit_name_prefixed,
-        subscribers: post.data.subscribers,
-        title: post.data.title,
-        selftext: post.data.selftext,
-        thumbnail: post.data.thumbnail ? post.data.thumbnail : null,
-        url: post.data.url,
-        score: post.data.score,
-        id: post.data.id,
-        num_comments: post.data.num_comments,
-        baseImg: post.data.preview ? {
-          url: post.data.preview ?  post.data.preview.images[0].source.url.replace(/&amp;/g, "&") : '',
-          width: post.data.preview.images[0].source.width,
-          height: post.data.preview.images[0].source.height
-        } : null
-    })),
+      currentPosts: children.map((post) => (
+        mapRedditChildToPost(post)
+    )),
     }));
+    console.log("Response :", response.data)
+    return response.data;
   },
   savePost: (post) =>
     set((state) => ({ savedPosts: [...state.savedPosts, post] })),
