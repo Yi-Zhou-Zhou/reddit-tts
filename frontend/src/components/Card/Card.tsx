@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Post } from "../../types/post";
 import Badge from "../Badge/Badge";
-import {BiUpvote} from 'react-icons/bi'
+import { BiUpvote } from "react-icons/bi";
 import { formatNumber } from "../../utils";
 import { FaRegComment } from "react-icons/fa";
 interface CardProps {
@@ -33,10 +33,7 @@ const Card = ({ post }: CardProps) => {
     return () => ro.disconnect();
   }, [post.baseImg]);
 
-  useEffect(() => {
-    // Update card selftext container so it fits perfectly
-
-  })
+  useEffect(() => {});
 
   return (
     <article className="max-w-[100vw] w-[700px] max-h-[100vh] p-4 rounded-2xl hover:cursor-pointer hover:bg-[#f6f8f9]">
@@ -65,17 +62,17 @@ const Card = ({ post }: CardProps) => {
           </div>
         </div>
       )}
-      {!post.baseImg && 
-      <div className=" overflow-hidden">
-<p className="overflow-hidden text-ellipsis break-words post-text">
-{post.selftext}</p>
-      </div>
-       }
+      {!post.baseImg && (
+        <div className=" overflow-hidden">
+          <p className="overflow-hidden text-ellipsis break-words post-text">
+            {post.selftext}
+          </p>
+        </div>
+      )}
       <span className="">
         <Badge Icon={BiUpvote} text={formatNumber(post.score)} />
         <Badge Icon={FaRegComment} text={formatNumber(post.num_comments)} />
       </span>
-      
     </article>
   );
 };
