@@ -9,7 +9,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { mapRedditChildToPost } from "../../utils";
 import NotFound from "../../components/NotFound/NotFound";
 import {useInView} from "react-intersection-observer";
-
+import type { InitialFetchReddit, RedditResponse} from "../../types/post";
 export const Route = createFileRoute("/_authenticated/")({
   component: RouteComponent,
 });
@@ -26,17 +26,17 @@ function RouteComponent() {
   }
 
   
-  const { data, isLoading, fetchNextPage} = useInfiniteQuery({
-    queryKey: ["posts", value],
-    queryFn: () => fetchPosts(value ? value : ""),
+  const { data, isLoading, fetchNextPage} = useInfiniteQuery<RedditResponse, Error, InitialFetchReddit, readonly [string, string|null], string| null | undefined>({
+    queryKey: ["posts", value ?? ""],
+    queryFn: ({ pageParam}) => fetchPosts(value ? value : "", pageParam),
     getNextPageParam: (lastPage) => {
-      return lastPage.data.after ?? undefined;
+      return lastPage.data.after ?? null;
     },
     initialPageParam: null,
   });
 
-  console.log(data)
   let body;
+  
   if (!value) {
     body = <p>Por favor, ingrese keywords para comenzar su búsqueda</p>;
   } else if (isLoading) {
@@ -45,7 +45,7 @@ function RouteComponent() {
     body = <NotFound />;
   } else if (data) {
     body = data.pages.flatMap(page => page.data.children.map(p => {
-      const post = mapRedditChildToPost(p);
+      const post = mapRedditChildToPost(p.data);
             return (
               <React.Fragment key={post.id}>
                 <Card post={post} />
@@ -56,11 +56,11 @@ function RouteComponent() {
     }))
 
   }
-
   useEffect(() => {
     if (inView) fetchNextPage();
   }, [inView, fetchNextPage])
 
+  console.log(data)
   return (
     <div>
       <div className="relative mb-8 w-[700px] max-w-screen">
@@ -77,7 +77,9 @@ function RouteComponent() {
 
         <section className="flex flex-col gap-2 ]">
             {body}
-            {data && data.pages[0].data.children.length > 0 && <div ref={endRef}/>}
+            {data && data.pages[data.pages.length - 1].data.after && (
+  <div ref={endRef} id="endRef" className="h-10" />
+)}
           </section>
       </div>
     </div>

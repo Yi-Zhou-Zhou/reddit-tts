@@ -4,6 +4,7 @@ import Badge from "../Badge/Badge";
 import { BiUpvote } from "react-icons/bi";
 import { formatNumber } from "../../utils";
 import { FaRegComment } from "react-icons/fa";
+import { useNavigate } from "@tanstack/react-router";
 interface CardProps {
   post: Post;
 }
@@ -11,7 +12,7 @@ interface CardProps {
 const Card = ({ post }: CardProps) => {
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxHeight, setBoxHeight] = useState<number>(0);
-
+  const navigate = useNavigate()
   useEffect(() => {
     if (!post.baseImg) return;
     const el = boxRef.current;
@@ -32,11 +33,10 @@ const Card = ({ post }: CardProps) => {
     ro.observe(el);
     return () => ro.disconnect();
   }, [post.baseImg]);
-
+  console.log(post)
   useEffect(() => {});
-
   return (
-    <article className="max-w-[100vw] w-[700px] max-h-[100vh] p-4 rounded-2xl hover:cursor-pointer hover:bg-[#f6f8f9]">
+    <article className="max-w-[100vw] w-[700px] max-h-[100vh] p-4 rounded-2xl hover:cursor-pointer hover:bg-[#f6f8f9]" onClick={() => navigate({to: `post/${post.subreddit}/${post.id}/${post.title}`})}>
       <span className="flex justify-between" key={post.id}>
         <p className="text-tiny font-bold">{post.subreddit_name_prefixed}</p>
       </span>

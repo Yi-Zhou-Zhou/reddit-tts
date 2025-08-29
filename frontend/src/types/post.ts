@@ -46,4 +46,16 @@ export interface RedditResponseChildren {
   kind: string
 }
 
+export interface InitialFetchReddit {
+  pageParams: [string|null],
+  pages: QueryPost[]
+}
 
+interface QueryPost {
+  data: {
+    after: string | null,
+    before: string | null,
+    children: RedditResponseChildren[]
+  }
+
+}

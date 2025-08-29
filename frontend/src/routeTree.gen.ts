@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedFavoritesRouteImport } from './routes/_authenticated/favorites'
+import { Route as AuthenticatedPostSubredditIdTitleRouteImport } from './routes/_authenticated/post.$subreddit.$id.$title'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -39,18 +40,26 @@ const AuthenticatedFavoritesRoute = AuthenticatedFavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedPostSubredditIdTitleRoute =
+  AuthenticatedPostSubredditIdTitleRouteImport.update({
+    id: '/post/$subreddit/$id/$title',
+    path: '/post/$subreddit/$id/$title',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/': typeof AuthenticatedIndexRoute
+  '/post/$subreddit/$id/$title': typeof AuthenticatedPostSubredditIdTitleRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/': typeof AuthenticatedIndexRoute
+  '/post/$subreddit/$id/$title': typeof AuthenticatedPostSubredditIdTitleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,12 +68,18 @@ export interface FileRoutesById {
   '/_authenticated/favorites': typeof AuthenticatedFavoritesRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/post/$subreddit/$id/$title': typeof AuthenticatedPostSubredditIdTitleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/auth' | '/favorites' | '/profile' | '/'
+  fullPaths:
+    | '/auth'
+    | '/favorites'
+    | '/profile'
+    | '/'
+    | '/post/$subreddit/$id/$title'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/favorites' | '/profile' | '/'
+  to: '/auth' | '/favorites' | '/profile' | '/' | '/post/$subreddit/$id/$title'
   id:
     | '__root__'
     | '/_authenticated'
@@ -72,6 +87,7 @@ export interface FileRouteTypes {
     | '/_authenticated/favorites'
     | '/_authenticated/profile'
     | '/_authenticated/'
+    | '/_authenticated/post/$subreddit/$id/$title'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -116,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFavoritesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/post/$subreddit/$id/$title': {
+      id: '/_authenticated/post/$subreddit/$id/$title'
+      path: '/post/$subreddit/$id/$title'
+      fullPath: '/post/$subreddit/$id/$title'
+      preLoaderRoute: typeof AuthenticatedPostSubredditIdTitleRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -123,12 +146,15 @@ interface AuthenticatedRouteChildren {
   AuthenticatedFavoritesRoute: typeof AuthenticatedFavoritesRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedPostSubredditIdTitleRoute: typeof AuthenticatedPostSubredditIdTitleRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedFavoritesRoute: AuthenticatedFavoritesRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedPostSubredditIdTitleRoute:
+    AuthenticatedPostSubredditIdTitleRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
