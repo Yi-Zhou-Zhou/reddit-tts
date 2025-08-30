@@ -59,3 +59,51 @@ interface QueryPost {
   }
 
 }
+
+export interface Comment{
+  author: string,
+  author_flair_text: string|null,
+  body: string,
+  media_metadata: {
+    [key:string]: MediaMetadataItem
+  }
+  score: number,
+  is_submitter: boolean,
+  created: number, // epoch unix time
+  subreddit: string,
+
+}
+
+interface MediaMetadataItem {
+  e: string,
+  m: string,
+  p: MediaType[],
+  s: MediaType,
+  id: string
+}
+
+interface MediaType {
+    "u": string,
+    "x": number,
+    "y": number
+  
+}
+
+export interface ApiListingItem<T>{
+  data: T,
+  kind: string,
+}
+
+export interface ApiListingResponse<T>{
+  data: {
+    after: string | null,
+    before: string| null,
+    children: ApiListingItem<T>[]
+  }
+}
+
+export interface InitialFetchPost<T>{
+  data: ApiListingResponse<T>[]
+}
+
+

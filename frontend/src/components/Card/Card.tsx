@@ -36,7 +36,7 @@ const Card = ({ post }: CardProps) => {
   console.log(post)
   useEffect(() => {});
   return (
-    <article className="max-w-[100vw] w-[700px] max-h-[100vh] p-4 rounded-2xl hover:cursor-pointer hover:bg-[#f6f8f9]" onClick={() => navigate({to: `post/${post.subreddit}/${post.id}/${post.title}`})}>
+    <article className="max-w-[100vw] w-[700px] max-h-[100vh] p-4 rounded-2xl hover:cursor-pointer hover:bg-[#f6f8f9]" onClick={() => navigate({to: `post/${post.subreddit}/${post.id}/`})}>
       <span className="flex justify-between" key={post.id}>
         <p className="text-tiny font-bold">{post.subreddit_name_prefixed}</p>
       </span>
