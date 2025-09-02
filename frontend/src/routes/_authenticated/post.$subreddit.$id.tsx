@@ -21,7 +21,7 @@ function RouteComponent() {
   const postData = response[0].data.children[0].data;
   const commentsData = response[1].data.children;
   return (
-    <div className="w-full">
+    <div className="w-full flex justify-center items-start">
       {response && <Post originalPoster={postData} comments={commentsData} />}
     </div>
   );

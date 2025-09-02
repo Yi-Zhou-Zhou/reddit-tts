@@ -30,13 +30,13 @@ function RouteComponent() {
     queryKey: ["posts", value ?? ""],
     queryFn: ({ pageParam}) => fetchPosts(value ? value : "", pageParam),
     getNextPageParam: (lastPage) => {
-      return lastPage.data.after ?? null;
+      return lastPage?.data.after ?? null;
     },
     initialPageParam: null,
   });
 
   let body;
-  
+  console.log(value, isLoading)
   if (!value) {
     body = <p>Por favor, ingrese keywords para comenzar su búsqueda</p>;
   } else if (isLoading) {
@@ -45,10 +45,10 @@ function RouteComponent() {
     body = <NotFound />;
   } else if (data) {
     body = data.pages.flatMap(page => page.data.children.map(p => {
-      const post = mapRedditChildToPost(p.data);
+      const post = mapRedditChildToPost(p.data, false);
             return (
               <React.Fragment key={post.id}>
-                <Card post={post} />
+                <Card post={post} isComment={false} />
                 <hr className="border border-darker-white" />
                 
               </React.Fragment>

@@ -30,7 +30,8 @@ export const usePosts = create<usePost>()((set) => ({
   currentPosts: [],
   fetchPosts: async (keywords = "", pageParam = null) => {
     // MUST CHANGE TO USER INPUT VALUES
-    const SORT_TYPE = "hot";
+    try {
+       const SORT_TYPE = "hot";
     const TIME_TYPE = "all";
     const response = await axios.get<fetchResponse>(
       `https://www.reddit.com/search.json?q=${keywords}&restrict_sr=false&sort=${SORT_TYPE}&t=${TIME_TYPE}${pageParam ? `&after=${pageParam}` : ''}`
@@ -40,10 +41,15 @@ export const usePosts = create<usePost>()((set) => ({
       beforeId: before ? before : null,
       afterId: after ? after : null,
       currentPosts: children.map((post) => (
-        mapRedditChildToPost(post.data)
+        mapRedditChildToPost(post.data, false)
     )),
     }));
     return response.data;
+    } catch (error) {
+      console.log(error)
+      throw Error ("Error while fetching post")
+    }
+   
   },
   savePost: (post) =>
     set((state) => ({ savedPosts: [...state.savedPosts, post] })),

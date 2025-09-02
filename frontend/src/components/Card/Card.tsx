@@ -7,12 +7,14 @@ import { FaRegComment } from "react-icons/fa";
 import { useNavigate } from "@tanstack/react-router";
 interface CardProps {
   post: Post;
+  isComment: boolean
 }
 
-const Card = ({ post }: CardProps) => {
+const Card = ({ post, isComment}: CardProps) => {
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxHeight, setBoxHeight] = useState<number>(0);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!post.baseImg) return;
     const el = boxRef.current;
@@ -33,14 +35,22 @@ const Card = ({ post }: CardProps) => {
     ro.observe(el);
     return () => ro.disconnect();
   }, [post.baseImg]);
-  console.log(post)
-  useEffect(() => {});
+
+  function handleClick(){
+    if (isComment) return;
+    navigate({ to: `post/${post.subreddit}/${post.id}/` })
+  }
+  
   return (
-    <article className="max-w-[100vw] w-[700px] max-h-[100vh] p-4 rounded-2xl hover:cursor-pointer hover:bg-[#f6f8f9]" onClick={() => navigate({to: `post/${post.subreddit}/${post.id}/`})}>
-      <span className="flex justify-between" key={post.id}>
-        <p className="text-tiny font-bold">{post.subreddit_name_prefixed}</p>
+    <article
+      className={`max-w-[100vw] w-[700px] max-h-[100vh] rounded-2xl hover:cursor-pointer ${!isComment ? 'p-4  hover:bg-[#f6f8f9]' : 'p-0'}`}
+      onClick={() => handleClick()}
+    >
+      {!isComment && <span className="flex justify-between" key={post.id}>
+        <p className="text-tiny font-bold">{post.subreddit_name_prefixed}</p> 
       </span>
-      <h1 className="font-bold text-lg">{post.title}</h1>
+      }
+      {!isComment && <h1 className="font-bold text-lg">{post.title}</h1>}
 
       {post.baseImg && (
         <div ref={boxRef} className="w-full">
@@ -64,15 +74,16 @@ const Card = ({ post }: CardProps) => {
       )}
       {!post.baseImg && (
         <div className=" overflow-hidden">
-          <p className="overflow-hidden text-ellipsis break-words post-text">
+          {!isComment &&  <p className="overflow-hidden text-ellipsis break-words post-text">
             {post.selftext}
-          </p>
+          </p>}
+         
         </div>
       )}
-      <span className="">
+      { !isComment && <span className="">
         <Badge Icon={BiUpvote} text={formatNumber(post.score)} />
         <Badge Icon={FaRegComment} text={formatNumber(post.num_comments)} />
-      </span>
+      </span> }
     </article>
   );
 };

@@ -14,7 +14,33 @@ export function formatNumber(num: number): string {
   return num.toString();
 }
 
-export function mapRedditChildToPost(child: RedditPostData): Post {
+export function mapRedditChildToPost(
+  child: RedditPostData | Comment,
+  isComment: boolean
+): Post {
+  let baseImg = null;
+
+  if (isComment && "media_metadata" in Object.keys(child)) {
+    const commentChild = child as Comment;
+    const firstElement = Object.values(commentChild.media_metadata)[0]; // Change this to get all medias
+    if (firstElement) {
+      baseImg = {
+        url: firstElement.s.u.replace(/&amp;/g, "&"),
+        width: firstElement.s.x,
+        height: firstElement.s.y,
+      };
+    }
+  } else {
+    if (child.preview) {
+      baseImg = {
+        url: child.preview.images[0].source.url.replace(/&amp;/g, "&"),
+        width: child.preview.images[0].source.width,
+        height: child.preview.images[0].source.height,
+      };
+    }
+  }
+
+  console.log();
   return {
     subreddit: child.subreddit,
     subreddit_id: child.subreddit_id,
@@ -27,13 +53,7 @@ export function mapRedditChildToPost(child: RedditPostData): Post {
     score: child.score,
     id: child.id,
     num_comments: child.num_comments,
-    baseImg: child.preview
-      ? {
-          url: child.preview.images[0].source.url.replace(/&amp;/g, "&"),
-          width: child.preview.images[0].source.width,
-          height: child.preview.images[0].source.height,
-        }
-      : null,
+    baseImg: baseImg,
   };
 }
 
@@ -46,6 +66,7 @@ export async function fetchPost(
   try {
     const response =
       await axios.get<ApiListingResponse<Comment>[]>(GET_POST_URL);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -72,10 +93,9 @@ export function calculateDifferenceTime(epochUNIXTime: number): string {
 
   for (const measure of Object.keys(measures) as TimeMeasure[]) {
     if (isMonthDifference > 0) {
-      if ((isMonthDifference > 1 && measure !== "yr" && measure !== "mo"))
+      if (isMonthDifference > 1 && measure !== "yr" && measure !== "mo")
         return isMonthDifference + " " + measure + "s ago";
       return isMonthDifference + " " + measure + " ago";
-
     }
     operator /= measures[measure];
     isMonthDifference = Math.floor(difference / operator);

@@ -60,7 +60,7 @@ interface QueryPost {
 
 }
 
-export interface Comment{
+export interface Comment extends RedditPostData{
   author: string,
   author_flair_text: string|null,
   body: string,
@@ -71,7 +71,6 @@ export interface Comment{
   is_submitter: boolean,
   created: number, // epoch unix time
   subreddit: string,
-
 }
 
 interface MediaMetadataItem {
